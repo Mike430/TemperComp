@@ -11,7 +11,7 @@
 ===========================================================================
 
 Temper
-v2.0.0
+v2.0.0 (Experimental Pre-Release - please do not distribute without permission)
 
 Distributed under MIT License:
 Copyright (c) 2021:
@@ -1121,6 +1121,7 @@ static double TemperGetTimestampInternal( const temperTimeUnit_t timeUnit ) {
 #error Uncrecognised platform.  It appears Temper does not support it.  If you think this is a bug, please submit an issue at https://github.com/dangmoody/Temper/issues
 #endif	// defined( _WIN32 )
 
+	// never gets here
 	return 0.0;
 }
 
