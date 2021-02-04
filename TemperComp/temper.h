@@ -1,3 +1,12 @@
+//
+// DM: I AM EXPERIMENTING WITH REMOVING WINDOWS.H AS A HARD INCLUDE
+// THE CURRENT STATE OF THIS FILE DOES NOT NECESSARILY REPRESENT HOW I THINK OR FEEL ABOUT USING THIS AS THE FINAL SOLUTION TO THIS PROBLEM
+// I WANT THIS TO BE CLEANER THAN WHAT IT IS NOW
+// AND I AM VERY SCARED THAT ON SOMEONES WINDOWS MACHINE OUT THERE SOMEWHERE IN THE WORLD THAT THIS ISN'T GOING TO COMPILE AND THE FIX IS NON-TRIVIAL
+// THEREFORE, UNTIL I GET CONFIRMATION THAT THIS IS NOT THE CASE (OR UNTIL I FIND A BETTER SOLUTION) THE CHANGES ARE FORMALLY DECLARED AS "EXPERIMENTAL AF"
+// PROCEED WITH CAUTION
+//
+
 /*
 ===========================================================================
 
@@ -29,10 +38,95 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-TODO: documentation here
+CONTENTS:
+	1. INTRO
+	2. INSTALLATION
+	3. QUICK START GUIDE
+	4. COMMAND LINE ARGS
+	5. CONTRIBUTING
+	6. CREDITS
+	7. CHANGELOG
 
 
-Changelog:
+1. INTRO
+The new and improved C99, single-header-only, unit testing framework.
+
+Distributed under the MIT license.  See LICENSE file for details.
+
+Features:
+	- Automatic test registration at compile time, simply write your test and it will get called for you.
+	- Parametric tests.
+	- Early exits for tests and a bunch of new condition macros.
+	- Handling errors from your program's log output (requires a bit of extra work on your part). `// DM: I'm thinking about this`
+	- Low friction, easily overridable functions to help hook Temper into your codebase.
+	- Support for Clang, GCC, and MSVC across Windows, Mac OS, and Linux on x64 ISAs (support for ARM in progress).
+
+It's not a new feature but worth stressing. It's still just the one header file.  Drop it into your project, tell it to run all tests somewhere in code and you're good to go! And once again; it's all written in C99 compliant code.
+
+
+2. INSTALLATION
+Download the latest release from the GitHub repository's release tab (https://github.com/dangmoody/Tantrum/releases/latest) and include `temper.h`.
+
+
+3. QUICK START GUIDE
+	#include <temper.h>
+
+	// write some tests
+
+	int main( int argc, char** argv )
+	{
+		TEMPER_RUN( argc, argv ); // Runs all your tests - parse 0 and NULL as parameters if you don't use start Args
+		return TEMPER_GET_EXIT_CODE(); // Fetches your return code
+	}
+
+On Windows and Mac OS you shouldn't need to do anything extra on your part to get Temper to compile correctly.  There should be no other dependencies that are required.  If you find that there are, please submit a bug report (https://github.com/dangmoody/Tantrum/issues).
+
+If you are compiling Temper on Linux and you are NOT overriding the default internal functions then you will need to make sure you pass the following arguments to your compiler/linker:
+* `-ldl` - required if you're not overriding the `LoadEXEHandle()` and `UnloadEXEHandle()` functions.
+* `-lpthread` - required if you're not overriding the `RunTestThread()` function.
+* `--export-dynamic` - or some other equivalent, required to allow the compiler to export the test functions so they can be called dynamically by Temper at runtime.
+
+When compiled, this will then produce an executable that will run all tests you have defined and return `TEMPDERDEV__EXIT_SUCCESS` (overridable) if there were no errors.  If there were errors then the program will return `TEMPDERDEV__EXIT_FAILURE` (overridable).
+
+
+4. COMMAND LINE ARGS
+Temper supports the following command line arguments:
+
+	[-h|--help]
+		Shows this help and then exits.
+
+	-t <test>
+		Only run the test with the given name.
+
+	-s <suite>
+		Only run tests in the suite with the given name.
+
+	-p
+		Enable partial filtering, which will only run tests and suites that contain the text specified in the filters.
+
+	--time-unit [seconds|ms|us|ns|clocks]
+		Set the units to measure test times in.
+		The default is microseconds.
+
+
+5. CONTRIBUTING
+Yes!
+
+If you want to submit an idea/bug then use the GitHub issue tracker (https://github.com/dangmoody/Tantrum/issues).
+
+If you want to submit code then we are open to pull requests.  See contributing.md for details.
+
+
+6. CREDITS
+Programming:
+	Dan Moody
+	Mike Young
+
+Special Thanks:
+	Zack Dutton - bug reports and testing
+
+
+7. CHANGELOG
 v2.0.0, <RELEASE DATE HERE>:
 	* Nearly everything has been completely re-written from scratch.
 	* Tests are now self-registering.  All you need to do now is write the test code and the tests will get called automatically for you (unless the test is marked as skipped).
@@ -45,6 +139,7 @@ v2.0.0, <RELEASE DATE HERE>:
 		* When enabled, will search for suites/tests that only contain the filter given instead of searching for an exact match.
 		* Disabled by default.  Use `-p` command line argument to enable.
 	* Added self-testing functionality (TO BE USED ONLY FOR TEMPER DEVELOPERS).
+	* Removed `TEMPER_DEFS` in favour of `TEMPER_RUN( argc, argv ) which you call inside main()`.
 	* Tests now run in their own thread.
 		* This allows tests to always exit even if a test is aborted when running code not directly inside the test function.
 	* Made various parts of the internal API extendable/overridable to help hook Temper into your codebase.
@@ -54,7 +149,7 @@ v2.0.0, <RELEASE DATE HERE>:
 		* If you want a test to exit if it fails use the `_A` suffix on your test function.
 	* Colored text console output is now always on.
 		* Therefore the command line argument `-c` has been removed.
-	* Much better internal API.
+	* Removed `TEMPER_SUITE_EXTERN` and `TEMPER_TEST_EXTERN` since there is now no need for them.
 
 v1.1.1, 1st October 2019:
 	* Fix bug when parsing the --time-unit command line argument.
@@ -116,7 +211,7 @@ extern "C" {
 #endif
 
 #if defined( _WIN32 )
-#include <Windows.h>
+//#include <Windows.h>
 #elif defined( __APPLE__ ) || defined( __linux__ )
 #include <unistd.h>
 #include <dlfcn.h>			// dlopen, dlsym, dlclose
@@ -392,14 +487,23 @@ do { \
 // This must be done before including temper.h
 //==========================================================
 
+// Returns a timestamp from the CPU in the 'timeUnit' format.
+// See temperTimeUnit_t for time units.
+#ifndef TEMPER_GET_TIMESTAMP
+#define TEMPER_GET_TIMESTAMP				TemperGetTimestampInternal
+#endif
+
+// The code that gets returned if all tests passed.
 #ifndef TEMPERDEV__EXIT_SUCCESS
 #define TEMPERDEV__EXIT_SUCCESS				EXIT_SUCCESS
 #endif
 
+// The code that gets returned if at least one test failed.
 #ifndef TEMPERDEV__EXIT_FAILURE
 #define TEMPERDEV__EXIT_FAILURE				EXIT_FAILURE
 #endif
 
+// Mainly used to avoid 'unused variable' warnings generated by compilers.
 #ifndef TEMPERDEV__UNUSED
 #define TEMPERDEV__UNUSED( x )				( (void) x )
 #endif
@@ -482,8 +586,151 @@ do { \
 
 
 //==========================================================
-// INTERNAL TYPES
+// Internal API
+//
+// You as the user probably don't want to be directly touching any of this.
 //==========================================================
+
+// In Windows Land...
+#if defined( _WIN32 )
+//#include <Windows.h>
+
+#ifndef STD_OUTPUT_HANDLE
+#define STD_OUTPUT_HANDLE   ((DWORD)-11)
+#endif
+
+#ifndef TEMPERDEV__WIN32__DUMMYSTRUCTNAME
+#define TEMPERDEV__WIN32__DUMMYSTRUCTNAME s
+#endif
+
+#ifndef STATUS_WAIT_0
+#define STATUS_WAIT_0                           ((DWORD   )0x00000000L) 
+#endif
+
+#ifndef WAIT_OBJECT_0
+#define WAIT_OBJECT_0       ((STATUS_WAIT_0 ) + 0 )
+#endif
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+//#ifndef TEMPERDEV__TYPEDEF_WINAPI( O, T )	typedef O temperWin32_ ## T
+
+typedef unsigned short WORD;
+typedef unsigned long DWORD;
+typedef DWORD* LPDWORD;
+typedef int BOOL;
+typedef long LONG;
+typedef long long LONGLONG;
+typedef size_t SIZE_T;
+typedef void* HANDLE;
+typedef void* HMODULE;
+typedef void* LPVOID;
+
+typedef __int64 INT_PTR;
+
+typedef INT_PTR FARPROC;
+
+typedef char* LPSTR;
+typedef wchar_t* LPWSTR;
+typedef const char* LPCSTR;
+typedef const wchar_t* LPCWSTR;
+
+typedef union _LARGE_INTEGER {
+	struct {
+		DWORD LowPart;
+		LONG HighPart;
+	} TEMPERDEV__WIN32__DUMMYSTRUCTNAME;
+	struct {
+		DWORD LowPart;
+		LONG HighPart;
+	} u;
+	LONGLONG QuadPart;
+} LARGE_INTEGER;
+
+typedef struct _SECURITY_ATTRIBUTES {
+  DWORD  nLength;
+  LPVOID lpSecurityDescriptor;
+  BOOL   bInheritHandle;
+} SECURITY_ATTRIBUTES, *PSECURITY_ATTRIBUTES, *LPSECURITY_ATTRIBUTES;
+
+typedef DWORD (__stdcall *LPTHREAD_START_ROUTINE) ( LPVOID lpThreadParameter );
+
+
+// SetConsoleTextAttribute
+__declspec( dllimport ) BOOL __stdcall SetConsoleTextAttribute( HANDLE hConsoleOuptut, WORD wAttributes );
+
+// QueryPerformanceCounter
+__declspec( dllimport ) BOOL __stdcall QueryPerformanceCounter( LARGE_INTEGER* lpPerformanceCounter );
+
+// QueryPerformanceFrequency
+__declspec( dllimport ) BOOL __stdcall QueryPerformanceFrequency( LARGE_INTEGER* lpPerformanceCounter );
+
+// LoadLibraryA
+__declspec( dllimport ) HMODULE __stdcall LoadLibraryA( LPCSTR lpLibFileName );
+
+// LoadLibraryW
+__declspec( dllimport ) HMODULE __stdcall LoadLibraryW( LPCWSTR lpLibFileName );
+
+// FreeLibrary
+__declspec( dllimport ) unsigned long __stdcall FreeLibrary( HMODULE hLibModule );
+
+// GetProcAddress
+__declspec( dllimport ) FARPROC __stdcall GetProcAddress( HMODULE hModule, LPCSTR lpProcName );
+
+// GetModuleFileNameA
+__declspec( dllimport ) DWORD __stdcall GetModuleFileNameA( HMODULE hModule, LPSTR lpFilename, DWORD nSize );
+
+// GetModuleFileNameW
+__declspec( dllimport ) DWORD __stdcall GetModuleFileNameW( HMODULE hModule, LPWSTR lpFilename, DWORD nSize );
+
+// CreateThread
+__declspec( dllimport ) HANDLE __stdcall CreateThread(
+  LPSECURITY_ATTRIBUTES   lpThreadAttributes,
+  SIZE_T                  dwStackSize,
+  LPTHREAD_START_ROUTINE  lpStartAddress,
+  LPVOID                  lpParameter,
+  DWORD                   dwCreationFlags,
+  LPDWORD                 lpThreadId
+);
+
+// WaitForMultipleObjects
+__declspec( dllimport ) DWORD __stdcall WaitForMultipleObjects(
+  DWORD        nCount,
+  const HANDLE *lpHandles,
+  BOOL         bWaitAll,
+  DWORD        dwMilliseconds
+);
+
+// GetExitCodeThread
+__declspec( dllimport ) BOOL __stdcall GetExitCodeThread(
+  HANDLE  hThread,
+  LPDWORD lpExitCode
+);
+
+// CloseHandle
+__declspec( dllimport ) BOOL __stdcall CloseHandle(
+  HANDLE hObject
+);
+
+// ExitThread
+__declspec( dllimport ) void __stdcall ExitThread(
+  DWORD dwExitCode
+);
+
+__declspec( dllimport ) HANDLE __stdcall GetStdHandle(
+  DWORD nStdHandle
+);
+
+__declspec( dllimport ) DWORD GetLastError( void );
+
+// In the civilised world...
+#else	// defined( _WIN32 )
+
+// TODO(DM): MacOS/Linux here
+
+#endif	// defined( _WIN32 )
 
 typedef uint32_t temperBool32;
 
@@ -531,7 +778,7 @@ typedef enum temperTimeUnit_t {
 //----------------------------------------------------------
 
 #if defined( _WIN32 )
-#define TEMPERDEV__MAX_PATH		MAX_PATH
+#define TEMPERDEV__MAX_PATH		4096	// DM!!! NO! probably malloc this!
 #elif defined( __APPLE__ ) || defined( __linux__ )	// _WIN32
 #define TEMPERDEV__MAX_PATH		PATH_MAX
 #else	// _WIN32
@@ -559,21 +806,21 @@ typedef struct temperTestContext_t {
 	temperBool32		currentTestWasAborted;
 	temperBool32		partialFilter;
 	temperTimeUnit_t	timeUnit;
+#ifdef UNICODE
+	wchar_t				programName[TEMPERDEV__MAX_PATH];
+#else
 	char				programName[TEMPERDEV__MAX_PATH];
+#endif
 	const char*			suiteFilterPrevious;
 	const char*			suiteFilter;
 	const char*			testFilter;
 } temperTestContext_t;
 
-//==========================================================
-// GLOBALS
-//==========================================================
+//----------------------------------------------------------
 
 static temperTestContext_t		g_temperTestContext;
 
-//==========================================================
-// PREPROCESSORS - TEMPER INTERNAL
-//==========================================================
+//----------------------------------------------------------
 
 #define TEMPERDEV__BIT( x )		( 1 << ( x ) )
 
@@ -724,11 +971,7 @@ static temperTestContext_t		g_temperTestContext;
 	/* leave this at the end so the macro can end with a semicolon */ \
 	temperTestInfo_t TEMPERDEV__API TEMPERDEV__CONCAT( __temper_test_info_fetcher_, counter )( void )
 
-//==========================================================
-// Internal Functions
-//
-// You as the user probably don't want to be directly touching these.
-//==========================================================
+//----------------------------------------------------------------
 
 #if defined( _WIN32 )
 #define TEMPERDEV__COLOR_DEFAULT	0x07
@@ -1008,7 +1251,11 @@ static bool TemperHandleCommandLineArgumentsInternal( int argc, char** argv ) {
 
 static void* TemperLoadEXEHandleInternal( void ) {
 #if defined( _WIN32 )
-	HMODULE handle = LoadLibrary( g_temperTestContext.programName );
+#ifdef UNICODE
+	HMODULE handle = LoadLibraryW( g_temperTestContext.programName );
+#else
+	HMODULE handle = LoadLibraryA( g_temperTestContext.programName );
+#endif
 	TEMPERDEV__ASSERT( handle );
 	return handle;
 #elif defined( __APPLE__ ) || defined( __linux__ )	// defined( _WIN32 )
@@ -1075,7 +1322,11 @@ static void TemperUnloadEXEHandleInternal( void* handle ) {
 
 static bool TemperGetFullEXEPathInternal( void ) {
 #if defined( _WIN32 )
-	DWORD fullExePathLength = GetModuleFileName( NULL, g_temperTestContext.programName, MAX_PATH );
+#ifdef UNICODE
+	DWORD fullExePathLength = GetModuleFileNameW( NULL, g_temperTestContext.programName, TEMPERDEV__MAX_PATH );
+#else
+	DWORD fullExePathLength = GetModuleFileNameA( NULL, g_temperTestContext.programName, TEMPERDEV__MAX_PATH );
+#endif
 	if ( fullExePathLength == 0 ) {
 		TEMPERDEV__LOG_ERROR( "WinAPI call GetModuleFileName() failed: 0x%lX\n", GetLastError() );
 		return false;
@@ -1133,6 +1384,9 @@ static const char* TemperGetTimeUnitStringInternal( const temperTimeUnit_t timeU
 		case TEMPER_TIME_UNIT_MS:		return "milliseconds";
 		case TEMPER_TIME_UNIT_SECONDS:	return "seconds";
 	}
+
+	// never gets here
+	return NULL;
 }
 
 //----------------------------------------------------------
