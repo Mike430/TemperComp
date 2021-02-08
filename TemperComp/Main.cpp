@@ -4,7 +4,7 @@
 //----------------------------------------------------------
 
 #ifdef EXECUTE_TESTS
-#include "temper.h"
+#include "temper\temper.h"
 int main( int argc, char* argv[] )
 {
     TEMPER_RUN(argc, argv);
