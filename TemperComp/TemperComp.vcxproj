@@ -121,10 +121,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="temper.h" />
+    <ClCompile Include="Source\Core\Vec2D.inl" />
+    <ClCompile Include="Source\Player\Player.cpp" />
+    <ClCompile Include="Source\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp" />
+    <ClInclude Include="Source\Core\GameObject.h" />
+    <ClCompile Include="Source\Core\GameObject.cpp" />
+    <ClInclude Include="Source\Core\Vec2D.h" />
+    <ClInclude Include="Source\Player\Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
