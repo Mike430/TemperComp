@@ -4,7 +4,15 @@
 //----------------------------------------------------------
 
 #ifdef EXECUTE_TESTS
+
 #include "temper.h"
+
+TEMPER_TEST( SomeTest, TEMPER_FLAG_SHOULD_RUN ) {
+    TEMPER_CHECK_TRUE( true );
+}
+
+//----------------------------------------------------------
+
 int main( int argc, char* argv[] )
 {
     TEMPER_RUN(argc, argv);

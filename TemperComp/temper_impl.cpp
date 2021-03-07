@@ -1,0 +1,6 @@
+#define TEMPER_IMPLEMENTATION
+#include "temper.h"
+
+TEMPER_TEST( TestMe, TEMPER_FLAG_SHOULD_RUN ) {
+    TEMPER_CHECK_TRUE( true );
+}
