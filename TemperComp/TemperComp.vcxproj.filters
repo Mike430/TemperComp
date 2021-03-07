@@ -27,9 +27,6 @@
     <ClCompile Include="Source\Core\GameObject.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
-    <ClCompile Include="Tests\PlayerTests\PlayerTests.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Tests\TestImplementation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

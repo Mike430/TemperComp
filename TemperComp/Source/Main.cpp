@@ -25,6 +25,8 @@ std::vector<GameObject*> g_scene;
 #ifdef EXECUTE_TESTS
 
 #include "temper\temper.h"
+#include "..\Tests\PlayerTests\PlayerTests.cpp"
+
 
 int main( int argc, char* argv[] )
 {
