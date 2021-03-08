@@ -622,7 +622,15 @@ typedef struct temperTestContext_t {
 
 //----------------------------------------------------------
 
-static temperTestContext_t				g_temperTestContext;
+#ifdef __cplusplus
+#define TEMPERDEV__EXTERN_C				extern "C"
+#else
+#define TEMPERDEV__EXTERN_C
+#endif
+
+//----------------------------------------------------------
+
+TEMPERDEV__EXTERN_C temperTestContext_t g_temperTestContext;
 
 //----------------------------------------------------------
 
@@ -648,17 +656,9 @@ static temperTestContext_t				g_temperTestContext;
 
 //----------------------------------------------------------
 
-#ifdef __cplusplus
-#define TEMPERDEV__EXTERN_C				extern "C"
-#else
-#define TEMPERDEV__EXTERN_C
-#endif
-
-//----------------------------------------------------------
-
 #if defined( __GNUC__ ) || defined( __clang__ )
 #define TEMPERDEV__TEST_INFO_FETCHER( testName ) \
-	void __temper_test_info_fetcher_ ## testName ( void ) __attribute( ( constructor ) ); \
+	void __temper_test_info_fetcher_ ## testName ( void ) __attribute__( ( constructor ) ); \
 	void __temper_test_info_fetcher_ ## testName ( void )
 #elif defined( _MSC_VER )	// defined( __GNUC__ ) || defined( __clang__ )
 #ifdef _WIN64
@@ -671,11 +671,11 @@ static temperTestContext_t				g_temperTestContext;
 #define TEMPERDEV__TEST_INFO_FETCHER( testName ) \
 	void __temper_test_info_fetcher_ ## testName( void ); \
 \
-	TEMPERDEV__EXTERN_C __declspec( allocate( ".CRT$XCU" ) ) void ( *testName ## _ )( void ) = __temper_test_info_fetcher_ ## testName; \
-	__pragma( comment( linker, "/include:" TEMPERDEV__MSVC_PREFIX #testName "_" ) ) \
+	TEMPERDEV__EXTERN_C __declspec( allocate( ".CRT$XCU" ) ) void ( *testName ## _FuncPtr )( void ) = __temper_test_info_fetcher_ ## testName; \
+	__pragma( comment( linker, "/include:" TEMPERDEV__MSVC_PREFIX #testName "_FuncPtr" ) ) \
 \
 	void __temper_test_info_fetcher_ ## testName( void )
-#endif	// defined( __GNUC__ ) || defined( __clang__ )
+#endif	// defined( _MSC_VER )
 
 //----------------------------------------------------------
 
@@ -770,6 +770,7 @@ int		TemperExecuteAllTestsWithArgumentsInternal( int argc, char** argv );
 #ifdef _WIN32
 #include <Windows.h>
 #endif
+temperTestContext_t g_temperTestContext;
 
 static void TemperSetTextColorInternal( const temperTextColor_t color ) {
 #if defined( _WIN32 )
