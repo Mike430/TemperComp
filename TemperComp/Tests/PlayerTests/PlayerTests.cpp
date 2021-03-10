@@ -7,3 +7,13 @@ PLAYER_TEST( FirstTest )
 {
 	TEMPER_CHECK_TRUE( true );
 }
+
+PLAYER_TEST( SecondTest )
+{
+	TEMPER_CHECK_TRUE( true );
+}
+
+PLAYER_TEST( ThirdTest )
+{
+	TEMPER_CHECK_TRUE( true );
+}
