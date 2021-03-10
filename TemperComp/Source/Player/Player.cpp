@@ -6,8 +6,8 @@ const size_t g_maxBodyParts = 1024;
 const int g_snakeStepSize = 50;
 const float g_startSpeed = 0.1f;
 const Vec2D g_rectDimensions = { 45.0f, 45.0f };
-const Color g_playerColour = { 252, 186, 3, 255 };
-const Color g_bodyColour = { 3, 152, 252, 255 };
+const Color g_playerColour = { 255, 155, 0, 255 };
+const Color g_bodyColour = { 255, 0, 0, 255 };
 
 //----------------------------------------------------------
 
@@ -19,6 +19,9 @@ Player::Player()
 	, m_currentTime( 0.0f )
 	, m_bodyPartsCount( 100 )
 	, m_bodyParts( g_maxBodyParts )
+#ifdef EXECUTE_TESTS
+	, PassKeyPressChecks( true )
+#endif //EXECUTE_TESTS
 {}
 
 //----------------------------------------------------------
@@ -58,24 +61,37 @@ void Player::Draw() const
 	}
 }
 
+//----------------------------------------------------------
+
+bool Player::CheckKeyPressed( const KeyboardKey Key ) const
+{
+#ifndef EXECUTE_TESTS
+	return IsKeyPressed( Key );
+#else
+	return PassKeyPressChecks;
+#endif //EXECUTE_TESTS
+}
+
+//----------------------------------------------------------
+
 void Player::HandleInput()
 {
-	if( IsKeyPressed( KEY_UP ) && m_moveStatePrevious != EPlayerMove::MoveDown )
+	if( CheckKeyPressed( KEY_UP ) && m_moveStatePrevious != EPlayerMove::MoveDown )
 	{
 		m_moveState = EPlayerMove::MoveUp;
 	}
 
-	if( IsKeyPressed( KEY_DOWN ) && m_moveStatePrevious != EPlayerMove::MoveUp )
+	if( CheckKeyPressed( KEY_DOWN ) && m_moveStatePrevious != EPlayerMove::MoveUp )
 	{
 		m_moveState = EPlayerMove::MoveDown;
 	}
 	
-	if( IsKeyPressed( KEY_LEFT ) && m_moveStatePrevious != EPlayerMove::MoveRight )
+	if( CheckKeyPressed( KEY_LEFT ) && m_moveStatePrevious != EPlayerMove::MoveRight )
 	{
 		m_moveState = EPlayerMove::MoveLeft;
 	}
 	
-	if( IsKeyPressed( KEY_RIGHT ) && m_moveStatePrevious != EPlayerMove::MoveLeft )
+	if( CheckKeyPressed( KEY_RIGHT ) && m_moveStatePrevious != EPlayerMove::MoveLeft )
 	{
 		m_moveState = EPlayerMove::MoveRight;
 	}

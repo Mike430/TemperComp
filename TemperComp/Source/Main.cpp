@@ -1,6 +1,3 @@
-#pragma once
-#include "Player/Player.h"
-
 //----------------------------------------------------------
 // Snake was originally released in 1976 and thus will cost
 // you 20 points if you attempt to make this your submission
@@ -14,6 +11,10 @@
 // hard-code a fame's deltatime. I'm on a tight schedule RN.
 //----------------------------------------------------------
 
+#include "Player/Player.h"
+
+//----------------------------------------------------------
+
 int g_sceenWidth = 1600;
 int g_sceenHeight = 900;
 int g_targetFPS = 60;
@@ -21,6 +22,8 @@ float g_deltaTime = 1.0f / g_targetFPS; // Write a disclaimer... I feel ill!
 Vector2 g_upperLeftCorner;
 Camera2D g_localCamera2D;
 std::vector<GameObject*> g_scene;
+
+//----------------------------------------------------------
 
 #ifdef EXECUTE_TESTS
 #include "temper\temper.h"
