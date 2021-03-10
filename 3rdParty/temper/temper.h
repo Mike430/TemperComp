@@ -615,6 +615,7 @@ typedef struct temperTestContext_t {
 	temperBool32		currentTestWasAborted;
 	temperBool32		partialFilter;
 	temperTimeUnit_t	timeUnit;
+	uint32_t			pad0;
 	const char*			suiteFilterPrevious;
 	const char*			suiteFilter;
 	const char*			testFilter;
@@ -622,7 +623,15 @@ typedef struct temperTestContext_t {
 
 //----------------------------------------------------------
 
-static temperTestContext_t				g_temperTestContext;
+#ifdef __cplusplus
+#define TEMPERDEV__EXTERN_C				extern "C"
+#else
+#define TEMPERDEV__EXTERN_C				extern
+#endif
+
+//----------------------------------------------------------
+
+TEMPERDEV__EXTERN_C temperTestContext_t g_temperTestContext;
 
 //----------------------------------------------------------
 
@@ -648,17 +657,14 @@ static temperTestContext_t				g_temperTestContext;
 
 //----------------------------------------------------------
 
-#ifdef __cplusplus
-#define TEMPERDEV__EXTERN_C				extern "C"
-#else
-#define TEMPERDEV__EXTERN_C
-#endif
-
-//----------------------------------------------------------
-
-#if defined( __GNUC__ ) || defined( __clang__ )
+#if defined( __clang__ )
 #define TEMPERDEV__TEST_INFO_FETCHER( testName ) \
-	void __temper_test_info_fetcher_ ## testName ( void ) __attribute( ( constructor ) ); \
+	void __temper_test_info_fetcher_ ## testName ( void ) __attribute__( ( constructor ) ); \
+	void __temper_test_info_fetcher_ ## testName ( void )
+#elif defined( __GNUC__ )
+#define TEMPERDEV__TEST_INFO_FETCHER( testName ) \
+	/* add 101 because gcc reserves constructors with priorities between 0 - 100 and __COUNTER__ starts at 0 */ \
+	void __temper_test_info_fetcher_ ## testName ( void ) __attribute__( ( constructor( __COUNTER__ + 101 ) ) ); \
 	void __temper_test_info_fetcher_ ## testName ( void )
 #elif defined( _MSC_VER )	// defined( __GNUC__ ) || defined( __clang__ )
 #ifdef _WIN64
@@ -671,13 +677,31 @@ static temperTestContext_t				g_temperTestContext;
 #define TEMPERDEV__TEST_INFO_FETCHER( testName ) \
 	void __temper_test_info_fetcher_ ## testName( void ); \
 \
-	TEMPERDEV__EXTERN_C __declspec( allocate( ".CRT$XCU" ) ) void ( *testName ## _ )( void ) = __temper_test_info_fetcher_ ## testName; \
-	__pragma( comment( linker, "/include:" TEMPERDEV__MSVC_PREFIX #testName "_" ) ) \
+	TEMPERDEV__EXTERN_C __declspec( allocate( ".CRT$XCU" ) ) void ( *testName ## _FuncPtr )( void ) = __temper_test_info_fetcher_ ## testName; \
+	__pragma( comment( linker, "/include:" TEMPERDEV__MSVC_PREFIX #testName "_FuncPtr" ) ) \
 \
 	void __temper_test_info_fetcher_ ## testName( void )
-#endif	// defined( __GNUC__ ) || defined( __clang__ )
+#endif	// defined( _MSC_VER )
 
 //----------------------------------------------------------
+
+static void TemperAddTestInternal( const temperTestInfo_t* newTestInfo ) {
+	TEMPERDEV__ASSERT( newTestInfo );
+	TEMPERDEV__ASSERT( newTestInfo->TestFuncCallback );
+	TEMPERDEV__ASSERT( newTestInfo->testNameStr );
+
+	uint64_t index = g_temperTestContext.testInfosCount++;
+
+	g_temperTestContext.testInfos = (temperTestInfo_t*) TEMPERDEV__REALLOC( g_temperTestContext.testInfos, g_temperTestContext.testInfosCount * sizeof( temperTestInfo_t ) );
+
+	temperTestInfo_t* testInfo = &g_temperTestContext.testInfos[index];
+	testInfo->OnBeforeTest		= newTestInfo->OnBeforeTest;
+	testInfo->TestFuncCallback	= newTestInfo->TestFuncCallback;
+	testInfo->OnAfterTest		= newTestInfo->OnAfterTest;
+	testInfo->testingFlag		= newTestInfo->testingFlag;
+	testInfo->suiteNameStr		= newTestInfo->suiteNameStr;
+	testInfo->testNameStr		= newTestInfo->testNameStr;
+}
 
 #define TEMPERDEV__DEFINE_TEST( suiteNameString, testName, onBeforeName, onAfterName, runFlag ) \
 	/*1. Create a function with a name matching the test.*/ \
@@ -685,17 +709,15 @@ static temperTestContext_t				g_temperTestContext;
 \
 	/*2. This is what the runner will loop over to grab the test function as well as all the information concerning it*/ \
 	TEMPERDEV__TEST_INFO_FETCHER( testName ) { \
-		uint64_t index = g_temperTestContext.testInfosCount++; \
+		temperTestInfo_t testInfo; \
+		testInfo.OnBeforeTest		= onBeforeName; \
+		testInfo.TestFuncCallback	= testName; \
+		testInfo.OnAfterTest		= onAfterName; \
+		testInfo.testingFlag		= runFlag; \
+		testInfo.suiteNameStr		= suiteNameString; \
+		testInfo.testNameStr		= #testName; \
 \
-		g_temperTestContext.testInfos = (temperTestInfo_t*) TEMPERDEV__REALLOC( g_temperTestContext.testInfos, g_temperTestContext.testInfosCount * sizeof( temperTestInfo_t ) ); \
-\
-		temperTestInfo_t* testInfo = &g_temperTestContext.testInfos[index]; \
-		testInfo->OnBeforeTest		= onBeforeName; \
-		testInfo->TestFuncCallback	= testName; \
-		testInfo->OnAfterTest		= onAfterName; \
-		testInfo->testingFlag		= runFlag; \
-		testInfo->suiteNameStr		= suiteNameString; \
-		testInfo->testNameStr		= #testName; \
+		TemperAddTestInternal( &testInfo ); \
 	} \
 \
 	/*3. The test function declared at Step1 is now declared here by the user*/ \
@@ -725,13 +747,11 @@ static temperTestContext_t				g_temperTestContext;
 	} \
 \
 	TEMPERDEV__TEST_INFO_FETCHER( invokationName ) { \
-		uint64_t index = g_temperTestContext.testInfosCount++; \
+		temperTestInfo_t testInfo; \
+		TemperGetParametricTestInfo_ ## testName( &testInfo ); \
+		testInfo.TestFuncCallback = TemperCallParametricTest_ ## invokationName; \
 \
-		g_temperTestContext.testInfos = (temperTestInfo_t*) TEMPERDEV__REALLOC( g_temperTestContext.testInfos, g_temperTestContext.testInfosCount * sizeof( temperTestInfo_t ) ); \
-\
-		temperTestInfo_t* testInfo = &g_temperTestContext.testInfos[index]; \
-		TemperGetParametricTestInfo_ ## testName( testInfo ); \
-		testInfo->TestFuncCallback = TemperCallParametricTest_ ## invokationName; \
+		TemperAddTestInternal( &testInfo ); \
 	} \
 \
 	void __temper_test_info_fetcher_ ## invokationName( void )
@@ -756,13 +776,15 @@ typedef const char*					temperTextColor_t;
 
 //----------------------------------------------------------
 
-void	TemperTestTrueInternal( const bool condition, const char* conditionStr, const bool abortOnFail, const char* file, const uint32_t line, const char* fmt, ... );
+TEMPERDEV__EXTERN_C void	TemperTestTrueInternal( const bool condition, const char* conditionStr, const bool abortOnFail, const char* file, const uint32_t line, const char* fmt, ... );
 
-void	TemperSetupInternal( void );
+TEMPERDEV__EXTERN_C void	TemperSetupInternal( void );
 
-int		TemperExecuteAllTestsInternal( void );
+TEMPERDEV__EXTERN_C int		TemperExecuteAllTestsInternal( void );
 
-int		TemperExecuteAllTestsWithArgumentsInternal( int argc, char** argv );
+TEMPERDEV__EXTERN_C int		TemperExecuteAllTestsWithArgumentsInternal( int argc, char** argv );
+
+TEMPERDEV__EXTERN_C bool	TemperFloatEqualsInternal( const float a, const float b, const float absoluteTolerance );
 
 //----------------------------------------------------------
 
@@ -770,6 +792,7 @@ int		TemperExecuteAllTestsWithArgumentsInternal( int argc, char** argv );
 #ifdef _WIN32
 #include <Windows.h>
 #endif
+temperTestContext_t g_temperTestContext;
 
 static void TemperSetTextColorInternal( const temperTextColor_t color ) {
 #if defined( _WIN32 )
@@ -856,7 +879,7 @@ static float TemperAbsfInternal( const float x ) {
 
 // DM: note that this is not final
 // I'm stashing this for now because it works for our use cases and I'm coming back to it to fully tidy it up later
-static bool TemperFloatEqualsInternal( const float a, const float b, const float absoluteTolerance ) {
+bool TemperFloatEqualsInternal( const float a, const float b, const float absoluteTolerance ) {
 	float relativeTolerance = 1e-9f;
 	bool isInRange = TEMPERDEV__ABSF( a - b ) <= TEMPERDEV__MAXF( absoluteTolerance, relativeTolerance * TEMPERDEV__MAXF( TEMPERDEV__ABSF( a ), TEMPERDEV__ABSF( b ) ) );
 
