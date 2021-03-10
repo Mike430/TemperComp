@@ -124,6 +124,7 @@
     <ClCompile Include="Source\Core\Vec2D.inl" />
     <ClCompile Include="Source\Player\Player.cpp" />
     <ClCompile Include="Source\Main.cpp" />
+    <ClCompile Include="Tests\PlayerTests\PlayerTests.cpp" />
     <ClCompile Include="Tests\TestImplementation.cpp" />
   </ItemGroup>
   <ItemGroup>
