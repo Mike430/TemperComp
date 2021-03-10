@@ -1,5 +1,6 @@
 #pragma once
 #ifdef EXECUTE_TESTS
+
 #include <temper/temper.h>
 
 #include "Source/Player/Player.h"
@@ -46,4 +47,5 @@ PLAYER_TEST( ThirdTest )
 {
 	TEMPER_CHECK_TRUE( true );
 }
+
 #endif // EXECUTE_TESTS
