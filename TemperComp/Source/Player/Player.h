@@ -4,12 +4,18 @@
 
 //----------------------------------------------------------
 
+#ifdef EXECUTE_TESTS
+struct PlayerTestHelperFunctions;
+#endif //EXECUTE_TESTS
+
+//----------------------------------------------------------
+
 enum EPlayerMove
 {
-	MoveUp,
-	MoveDown,
-	MoveLeft,
-	MoveRight,
+	MoveUp = 0,
+	MoveDown = 1,
+	MoveLeft = 2,
+	MoveRight = 3,
 };
 
 //----------------------------------------------------------
@@ -43,7 +49,8 @@ private:
 
 #ifdef EXECUTE_TESTS
 public:
-	bool PassKeyPressChecks;
+	friend PlayerTestHelperFunctions;
+	KeyboardKey FakeKeyPressed;
 #endif //EXECUTE_TESTS
 };
 

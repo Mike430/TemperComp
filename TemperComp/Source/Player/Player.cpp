@@ -20,7 +20,7 @@ Player::Player()
 	, m_bodyPartsCount( 100 )
 	, m_bodyParts( g_maxBodyParts )
 #ifdef EXECUTE_TESTS
-	, PassKeyPressChecks( true )
+	, FakeKeyPressed( ( KeyboardKey ) 0 )
 #endif //EXECUTE_TESTS
 {}
 
@@ -68,7 +68,7 @@ bool Player::CheckKeyPressed( const KeyboardKey Key ) const
 #ifndef EXECUTE_TESTS
 	return IsKeyPressed( Key );
 #else
-	return PassKeyPressChecks;
+	return FakeKeyPressed == Key;
 #endif //EXECUTE_TESTS
 }
 
@@ -85,12 +85,12 @@ void Player::HandleInput()
 	{
 		m_moveState = EPlayerMove::MoveDown;
 	}
-	
+
 	if( CheckKeyPressed( KEY_LEFT ) && m_moveStatePrevious != EPlayerMove::MoveRight )
 	{
 		m_moveState = EPlayerMove::MoveLeft;
 	}
-	
+
 	if( CheckKeyPressed( KEY_RIGHT ) && m_moveStatePrevious != EPlayerMove::MoveLeft )
 	{
 		m_moveState = EPlayerMove::MoveRight;
