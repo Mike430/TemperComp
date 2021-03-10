@@ -29,6 +29,7 @@ public:
 	bool PointCoversTale( const Vec2D& position ) { return true; }
 
 private:
+	bool CheckKeyPressed( const KeyboardKey Key ) const;
 	void HandleInput();
 	void MovePlayer( const float deltaTime );
 	void UpdateBody();
@@ -39,6 +40,11 @@ private:
 	float m_currentTime;
 	size_t m_bodyPartsCount;
 	std::vector<Vec2D> m_bodyParts;
+
+#ifdef EXECUTE_TESTS
+public:
+	bool PassKeyPressChecks;
+#endif //EXECUTE_TESTS
 };
 
 //----------------------------------------------------------
