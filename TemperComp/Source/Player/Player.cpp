@@ -67,18 +67,6 @@ void Player::Draw() const
 				   g_rectDimensions.x,
 				   g_rectDimensions.y,
 				   g_playerColour );
-
-	//		const std::vector<Vec2D> sparePoints = GetAvailableCellsPositions();
-	//		
-	//		for( int i = 0; i < sparePoints.size(); ++i )
-	//		{
-	//			DrawCircle( sparePoints[ i ].x - ( g_snakeStepSize ),
-	//						sparePoints[ i ].y - ( g_snakeStepSize ),
-	//						5.0f,
-	//						{ 0, 225, 255, 255 } );
-	//		}
-	//		
-	//		DrawCircle( 0.0f, 0.0f, 10.0f, { 225, 0, 255, 255 } );
 }
 
 //----------------------------------------------------------
@@ -122,6 +110,7 @@ const std::vector<Vec2D> Player::GetAvailableCellsPositions() const
 void Player::GrantExtraBodyPart()
 {
 	m_bodyPartsCount = m_bodyPartsCount >= m_maxBodyPartsCount? m_bodyPartsCount : m_bodyPartsCount + 1;
+	m_bodyParts[ m_bodyPartsCount - 1 ] = m_bodyParts[ m_bodyPartsCount - 2 ];
 }
 
 //----------------------------------------------------------
