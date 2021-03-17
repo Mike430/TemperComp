@@ -1,6 +1,8 @@
 #pragma once
 #include <math.h>
 
+//----------------------------------------------------------
+
 struct Vec2D
 {
 public:
@@ -43,3 +45,16 @@ public:
 	inline void Reflect( const Vec2D& normal ) { *this += ( ( 2.0f * DotProduct( normal ) ) * normal.GetReverse() ); }
 	inline void Clamp( float maxLength ) { *this = GetLength() < maxLength ? *this : GetNormalised() * maxLength; }
 };
+
+//----------------------------------------------------------
+
+#define DEFAULT_EPSILON 0.001f
+
+//----------------------------------------------------------
+
+inline bool operator==( const Vec2D& lhs, const Vec2D rhs )
+{
+	return fabs( lhs.x - rhs.x ) < DEFAULT_EPSILON && fabs( lhs.y - rhs.y ) < DEFAULT_EPSILON;
+}
+
+//----------------------------------------------------------

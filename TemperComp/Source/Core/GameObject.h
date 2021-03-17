@@ -10,6 +10,8 @@ public:
 	virtual void Update( const float DeltaTime );
 	virtual void Draw() const;
 
+	Vec2D GetPosition() const;
+
 protected:
 	Vec2D m_position;
 };

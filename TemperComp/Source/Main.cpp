@@ -11,11 +11,15 @@
 // hard-code a fame's deltatime. I'm on a tight schedule RN.
 //----------------------------------------------------------
 
-#include "Player/Player.h"
+#include "Source/Player/Player.h"
+#include "Source/Managers/ScoreManager.h"
+
+#include <string>
+#include <iostream>
 
 //----------------------------------------------------------
 
-int g_sceenWidth = 1600;
+int g_sceenWidth = 900;
 int g_sceenHeight = 900;
 int g_targetFPS = 60;
 float g_deltaTime = 1.0f / g_targetFPS; // Write a disclaimer... I feel ill!
@@ -42,7 +46,11 @@ int main( int argc, char* argv[] )
 	g_upperLeftCorner = { -g_sceenWidth * 0.5f, -g_sceenHeight * 0.5f };
 	g_localCamera2D = { 0.0f, 0.0f, g_upperLeftCorner.x, g_upperLeftCorner.y, 0.0f, 1.0f };
 
-	g_scene.push_back( new Player() );
+	Player* player = new Player( g_sceenWidth, g_sceenHeight );
+	g_scene.push_back( player );
+
+	ScoreManager* scoreManager = ScoreManager::GetInstance();
+	scoreManager->SetPlayer( player );
 
 	// GAME LOOP
 	while( !WindowShouldClose() ) // responds to ESC key and close window button
@@ -63,7 +71,15 @@ int main( int argc, char* argv[] )
 			gameObject->Draw();
 		}
 
-		DrawText( "Your score: 0", ( int ) g_upperLeftCorner.x, ( int ) g_upperLeftCorner.y, 20, GREEN );
+		Vec2D pickupPosition = scoreManager->GetPickupPosition();
+		DrawCircle( pickupPosition.x - 25,
+					pickupPosition.y - 25,
+					25,
+					{ 255, 100, 200, 255 } );
+
+		std::string scoreText = "Your score:";
+		scoreText += std::to_string( scoreManager->GetScore() );
+		DrawText( scoreText.c_str(), ( int ) g_upperLeftCorner.x, ( int ) g_upperLeftCorner.y, 20, GREEN );
 
 		EndMode2D();
 		EndDrawing();

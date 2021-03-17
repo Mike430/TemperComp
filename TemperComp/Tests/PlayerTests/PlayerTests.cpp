@@ -56,7 +56,7 @@ void PlayerPostTestTeardown()
 //==========================================================
 
 #define PLAYER_TEST( testName ) TEMPER_TEST_C( testName, PlayerPreTestSetup, PlayerPostTestTeardown, TEMPER_FLAG_SHOULD_RUN )
-#define PLAYER_PARAMETRIC(TestName, ...) TEMPER_PARAMETRIC_C( TestName, PlayerPreTestSetup, PlayerPostTestTeardown, TEMPER_FLAG_SHOULD_RUN, __VA_ARGS__ )
+#define PLAYER_PARAMETRIC( TestName, ... ) TEMPER_PARAMETRIC_C( TestName, PlayerPreTestSetup, PlayerPostTestTeardown, TEMPER_FLAG_SHOULD_RUN, __VA_ARGS__ )
 
 //==========================================================
 // TESTS
@@ -67,7 +67,7 @@ PLAYER_PARAMETRIC( Player_ProvidedInput_InterpretsDirectionCoorectly, const Keyb
 	TestablePlayer->FakeKeyPressed = Key;
 	PlayerTestHelperFunctions::SetPlayerMoveStates( TestablePlayer, StartingDir, StartingDir );
 	PlayerTestHelperFunctions::TestHandleInput( TestablePlayer );
-	
+
 	const EPlayerMove CurrentMoveState = PlayerTestHelperFunctions::GetPlayerCurrentMoveState( TestablePlayer );
 	TEMPER_CHECK_EQUAL_M( CurrentMoveState,
 						  ExpectedResult,
@@ -78,25 +78,25 @@ PLAYER_PARAMETRIC( Player_ProvidedInput_InterpretsDirectionCoorectly, const Keyb
 
 //----------------------------------------------------------
 
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric1, KeyboardKey::KEY_UP, EPlayerMove::MoveDown, EPlayerMove::MoveDown );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric2, KeyboardKey::KEY_UP, EPlayerMove::MoveLeft, EPlayerMove::MoveUp );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric3, KeyboardKey::KEY_UP, EPlayerMove::MoveRight, EPlayerMove::MoveUp );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric4, KeyboardKey::KEY_UP, EPlayerMove::MoveUp, EPlayerMove::MoveUp );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_UP, EPlayerMove::MoveDown, EPlayerMove::MoveDown );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_UP, EPlayerMove::MoveLeft, EPlayerMove::MoveUp );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_UP, EPlayerMove::MoveRight, EPlayerMove::MoveUp );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_UP, EPlayerMove::MoveUp, EPlayerMove::MoveUp );
 
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric5, KeyboardKey::KEY_DOWN, EPlayerMove::MoveDown, EPlayerMove::MoveDown );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric6, KeyboardKey::KEY_DOWN, EPlayerMove::MoveLeft, EPlayerMove::MoveDown );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric7, KeyboardKey::KEY_DOWN, EPlayerMove::MoveRight, EPlayerMove::MoveDown );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric8, KeyboardKey::KEY_DOWN, EPlayerMove::MoveUp, EPlayerMove::MoveUp );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_DOWN, EPlayerMove::MoveDown, EPlayerMove::MoveDown );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_DOWN, EPlayerMove::MoveLeft, EPlayerMove::MoveDown );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_DOWN, EPlayerMove::MoveRight, EPlayerMove::MoveDown );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_DOWN, EPlayerMove::MoveUp, EPlayerMove::MoveUp );
 
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric9, KeyboardKey::KEY_LEFT, EPlayerMove::MoveDown, EPlayerMove::MoveLeft );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric10, KeyboardKey::KEY_LEFT, EPlayerMove::MoveLeft, EPlayerMove::MoveLeft );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric11, KeyboardKey::KEY_LEFT, EPlayerMove::MoveRight, EPlayerMove::MoveRight );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric12, KeyboardKey::KEY_LEFT, EPlayerMove::MoveUp, EPlayerMove::MoveLeft );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_LEFT, EPlayerMove::MoveDown, EPlayerMove::MoveLeft );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_LEFT, EPlayerMove::MoveLeft, EPlayerMove::MoveLeft );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_LEFT, EPlayerMove::MoveRight, EPlayerMove::MoveRight );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_LEFT, EPlayerMove::MoveUp, EPlayerMove::MoveLeft );
 
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric13, KeyboardKey::KEY_RIGHT, EPlayerMove::MoveDown, EPlayerMove::MoveRight );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric14, KeyboardKey::KEY_RIGHT, EPlayerMove::MoveLeft, EPlayerMove::MoveLeft );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric15, KeyboardKey::KEY_RIGHT, EPlayerMove::MoveRight, EPlayerMove::MoveRight );
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, PlayerParamtric16, KeyboardKey::KEY_RIGHT, EPlayerMove::MoveUp, EPlayerMove::MoveRight );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_RIGHT, EPlayerMove::MoveDown, EPlayerMove::MoveRight );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_RIGHT, EPlayerMove::MoveLeft, EPlayerMove::MoveLeft );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_RIGHT, EPlayerMove::MoveRight, EPlayerMove::MoveRight );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_RIGHT, EPlayerMove::MoveUp, EPlayerMove::MoveRight );
 
 //----------------------------------------------------------
 

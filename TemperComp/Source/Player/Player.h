@@ -1,5 +1,5 @@
 #pragma once
-#include "../Core/GameObject.h"
+#include "Source/Core/GameObject.h"
 #include <vector>
 
 //----------------------------------------------------------
@@ -23,7 +23,7 @@ enum EPlayerMove
 class Player : public GameObject
 {
 public:
-	Player();
+	Player(int screenWidth, int screenHeight);
 	~Player();
 
 	// GameObject Inherited
@@ -31,21 +31,28 @@ public:
 	virtual void Draw() const override;
 	// GameObject Inherited
 
-	Vec2D IndexToTalelessPosition( const int index ) { return Vec2D(); }
-	bool PointCoversTale( const Vec2D& position ) { return true; }
+	const std::vector<Vec2D> GetAvailableCellsPositions() const;
+	void GrantExtraBodyPart();
 
 private:
 	bool CheckKeyPressed( const KeyboardKey Key ) const;
 	void HandleInput();
 	void MovePlayer( const float deltaTime );
 	void UpdateBody();
+	bool ShouldDie();
 
 	EPlayerMove m_moveState;
 	EPlayerMove m_moveStatePrevious;
 	float m_moveTimer;
 	float m_currentTime;
-	size_t m_bodyPartsCount;
+	int m_screenWidth;
+	int m_screenHeight;
+	int m_availableSpaces;
+	int m_maxBodyPartsCount;
+	int m_bodyPartsCount;
 	std::vector<Vec2D> m_bodyParts;
+
+	bool IsDead;
 
 #ifdef EXECUTE_TESTS
 public:

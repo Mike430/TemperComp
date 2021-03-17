@@ -121,6 +121,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\Managers\ScoreManager.cpp" />
     <ClCompile Include="Source\Core\Vec2D.inl" />
     <ClCompile Include="Source\Player\Player.cpp" />
     <ClCompile Include="Source\Main.cpp" />
@@ -128,6 +129,7 @@
     <ClCompile Include="Tests\TestImplementation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Source\Managers\ScoreManager.h" />
     <ClInclude Include="Source\Core\GameObject.h" />
     <ClCompile Include="Source\Core\GameObject.cpp" />
     <ClInclude Include="Source\Core\Vec2D.h" />
