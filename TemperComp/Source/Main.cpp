@@ -72,8 +72,8 @@ int main( int argc, char* argv[] )
 		}
 
 		Vec2D pickupPosition = scoreManager->GetPickupPosition();
-		DrawCircle( pickupPosition.x - 25,
-					pickupPosition.y - 25,
+		DrawCircle( ( int ) pickupPosition.x - 25,
+					( int ) pickupPosition.y - 25,
 					25,
 					{ 255, 100, 200, 255 } );
 

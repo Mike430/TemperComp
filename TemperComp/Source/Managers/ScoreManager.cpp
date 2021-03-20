@@ -77,7 +77,7 @@ ScoreManager::ScoreManager()
 	, m_player(nullptr)
 	, m_score(0)
 {
-	srand( time( NULL ) );
+	srand( ( unsigned int ) time( NULL ) );
 }
 
 //----------------------------------------------------------

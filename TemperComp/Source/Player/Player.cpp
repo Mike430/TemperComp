@@ -5,7 +5,7 @@
 //----------------------------------------------------------
 
 const size_t g_maxBodyParts = 1024;
-const int g_snakeStepSize = 50;
+const float g_snakeStepSize = 50.f;
 const float g_startSpeed = 0.1f;
 const Vec2D g_rectDimensions = { 45.0f, 45.0f };
 const Color g_playerColour = { 255, 155, 0, 255 };
@@ -22,7 +22,7 @@ Player::Player( int screenWidth, int screenHeight )
 	, m_currentTime( 0.0f )
 	, m_screenWidth( screenWidth )
 	, m_screenHeight( screenHeight )
-	, m_availableSpaces( ( ( m_screenWidth / g_snakeStepSize )* ( m_screenHeight / g_snakeStepSize ) ) )
+	, m_availableSpaces( ( ( m_screenWidth / ( int )g_snakeStepSize )* ( m_screenHeight / ( int )g_snakeStepSize ) ) )
 	, m_maxBodyPartsCount( m_availableSpaces - 1 ) // minus 1 for the head part
 	, m_bodyPartsCount( 2 )
 	, m_bodyParts( m_maxBodyPartsCount )
@@ -36,7 +36,7 @@ Player::Player( int screenWidth, int screenHeight )
 
 Player::~Player()
 {
-	m_bodyParts.empty();
+	m_bodyParts.clear();
 }
 
 //----------------------------------------------------------
@@ -55,17 +55,17 @@ void Player::Draw() const
 {
 	for( int i = 0; i < m_bodyPartsCount && i < m_bodyParts.size(); ++i )
 	{
-		DrawRectangle( m_bodyParts[ i ].x - ( g_snakeStepSize ),
-					   m_bodyParts[ i ].y - ( g_snakeStepSize ),
-					   g_rectDimensions.x,
-					   g_rectDimensions.y,
+		DrawRectangle( ( int ) ( m_bodyParts[ i ].x - g_snakeStepSize ),
+					   ( int ) ( m_bodyParts[ i ].y - g_snakeStepSize ),
+					   ( int ) g_rectDimensions.x,
+					   ( int ) g_rectDimensions.y,
 					   g_bodyColour );
 	}
 
-	DrawRectangle( m_position.x - ( g_snakeStepSize ),
-				   m_position.y - ( g_snakeStepSize ),
-				   g_rectDimensions.x,
-				   g_rectDimensions.y,
+	DrawRectangle( ( int ) ( m_position.x - g_snakeStepSize ),
+				   ( int ) ( m_position.y - g_snakeStepSize ),
+				   ( int ) g_rectDimensions.x,
+				   ( int ) g_rectDimensions.y,
 				   g_playerColour );
 }
 
@@ -76,14 +76,14 @@ const std::vector<Vec2D> Player::GetAvailableCellsPositions() const
 	std::vector<Vec2D> result;
 	result.reserve( m_maxBodyPartsCount - m_bodyPartsCount );
 
-	int horizontalSpaces = m_screenWidth / g_snakeStepSize;
-	int verticalSpaces = m_screenHeight / g_snakeStepSize;
+	const int horizontalSpaces = m_screenWidth / ( int ) g_snakeStepSize;
+	const int verticalSpaces = m_screenHeight / ( int ) g_snakeStepSize;
 
 	for( int x = 0; x < horizontalSpaces; ++x )
 	{
 		for( int y = 0; y < verticalSpaces; ++y )
 		{
-			Vec2D space( ( ( x * g_snakeStepSize ) + g_snakeStepSize ) - ( m_screenWidth / 2 ), ( ( y * g_snakeStepSize ) + g_snakeStepSize ) - ( m_screenHeight / 2 ) );
+			Vec2D space( ( ( x * g_snakeStepSize ) + g_snakeStepSize ) - ( ( float ) m_screenWidth * 0.5f ), ( ( y * g_snakeStepSize ) + g_snakeStepSize ) - ( ( float ) m_screenHeight * .5f ) );
 			bool spaceIsFree = true;
 
 			for( int i = 0; i < m_bodyParts.size() && i < m_bodyPartsCount; ++i )
@@ -109,7 +109,7 @@ const std::vector<Vec2D> Player::GetAvailableCellsPositions() const
 
 void Player::GrantExtraBodyPart()
 {
-	m_bodyPartsCount = m_bodyPartsCount >= m_maxBodyPartsCount? m_bodyPartsCount : m_bodyPartsCount + 1;
+	m_bodyPartsCount = m_bodyPartsCount >= m_maxBodyPartsCount ? m_bodyPartsCount : m_bodyPartsCount + 1;
 	m_bodyParts[ m_bodyPartsCount - 1 ] = m_bodyParts[ m_bodyPartsCount - 2 ];
 }
 
@@ -209,8 +209,8 @@ void Player::UpdateBody()
 
 bool Player::ShouldDie()
 {
-	float xExtent = m_screenWidth / 2;
-	float yExtent = m_screenHeight / 2;
+	float xExtent = ( float ) ( m_screenWidth / 2 );
+	float yExtent = ( float ) ( m_screenHeight / 2 );
 
 	// Is outside playspace
 	if( m_position.x < -xExtent || m_position.x > xExtent ||
