@@ -39,7 +39,7 @@ public:
 void PlayerPreTestSetup()
 {
 	printf( "PlayerPreTestSetup called \n" );
-	TestablePlayer = new Player();
+	TestablePlayer = new Player(900, 900);
 }
 
 //----------------------------------------------------------
