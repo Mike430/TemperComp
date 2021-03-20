@@ -7,5 +7,5 @@ install:
   - choco install visualstudio2019buildtools --package-parameters "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64"
 script:
   - export PATH=$MSBUILD_PATH:$PATH
-  - MSBuild.exe -t:Rebuild -p:Configuration=UnitTesting -p:AdditionalLibPaths=3rdParty\raylib\bin -p:Platform=x64 TemperComp\TemperComp.vcxproj
-  - .\BuildOutput\UnitTesting\TemperComp.exe
+  - MSBuild.exe -t:Rebuild -p:Configuration=UnitTesting -p:AdditionalLibPaths=3rdParty\raylib\bin -p:Platform=x64 TemperComp/TemperComp.vcxproj
+  - .\TemperComp\BuildOutput\UnitTesting\TemperComp.exe
