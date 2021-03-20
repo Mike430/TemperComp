@@ -8,5 +8,5 @@ install:
 script:
   - export PATH=$MSBUILD_PATH:$PATH
   - MSBuild.exe -t:Rebuild -p:Configuration=UnitTesting -p:AdditionalLibPaths=3rdParty\raylib\bin -p:Platform=x64 TemperComp/TemperComp.vcxproj
-  - echo tree
-  - TemperComp\BuildOutput\UnitTesting\TemperComp.exe
+  - $ echo $tree
+  - $ echo $.\TemperComp\BuildOutput\UnitTesting\TemperComp.exe
