@@ -98,7 +98,7 @@ PLAYER_PARAMETRIC( Player_ProvidedInput_InterpretsDirectionCoorectly, const Keyb
 
 //----------------------------------------------------------
 
-TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_UP, EPlayerMove::MoveDown, EPlayerMove::MoveDown );
+TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_UP, EPlayerMove::MoveDown, EPlayerMove::MoveUp );
 TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_UP, EPlayerMove::MoveLeft, EPlayerMove::MoveUp );
 TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_UP, EPlayerMove::MoveRight, EPlayerMove::MoveUp );
 TEMPER_INVOKE_PARAMETRIC_TEST( Player_ProvidedInput_InterpretsDirectionCoorectly, KeyboardKey::KEY_UP, EPlayerMove::MoveUp, EPlayerMove::MoveUp );
