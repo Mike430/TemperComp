@@ -33,6 +33,7 @@ public:
 
 	const std::vector<Vec2D> GetAvailableCellsPositions() const;
 	void GrantExtraBodyPart();
+	bool HasDied() { return IsDead; }
 
 private:
 	bool CheckKeyPressed( const KeyboardKey Key ) const;

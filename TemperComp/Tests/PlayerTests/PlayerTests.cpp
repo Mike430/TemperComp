@@ -181,12 +181,6 @@ PLAYER_TEST( PlayerWithBodyLength3_GetAvailablePositionsCalled_ArrayIsOfCorrectS
 
 //----------------------------------------------------------
 
-//	PLAYER_TEST( PlayerWithBodyLength3_ExtraBodyPartGranted_ExtraPartUpdates )
-//	{
-//	}
-
-//----------------------------------------------------------
-
 PLAYER_TEST( Player_OutOfBounds_ShouldDieIsTrue )
 {
 	PlayerTestHelpers::SetPlayerBodyParts( g_testPlayer, std::vector<Vec2D>() ); // give the player an empty array so we aren't overlapping ourselves
@@ -204,12 +198,6 @@ PLAYER_TEST( Player_OutOfBounds_ShouldDieIsTrue )
 	g_testPlayer->SetPosition( Vec2D( 150.f, 0.f ) );
 	TEMPER_CHECK_TRUE_M( PlayerTestHelpers::GetShouldDie( g_testPlayer ), "The player should off the right of the screen and so should be dead.\n" );
 }
-
-//----------------------------------------------------------
-
-//	PLAYER_TEST( PlayerWithBodyLength3_OverlapsBodyPart_ShouldDieIsTrue )
-//	{
-//	}
 
 //----------------------------------------------------------
 

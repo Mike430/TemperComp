@@ -19,6 +19,7 @@
 
 //----------------------------------------------------------
 
+bool shutdownRequested = false;
 int g_sceenWidth = 900;
 int g_sceenHeight = 900;
 int g_targetFPS = 60;
@@ -26,6 +27,31 @@ float g_deltaTime = 1.0f / g_targetFPS; // Write a disclaimer... I feel ill!
 Vector2 g_upperLeftCorner;
 Camera2D g_localCamera2D;
 std::vector<GameObject*> g_scene;
+Player* g_player = nullptr;
+
+//----------------------------------------------------------
+
+void PresentMainMenu()
+{
+	DrawRectangle( -g_sceenWidth,
+				   -g_sceenHeight,
+				   g_sceenWidth,
+				   g_sceenHeight,
+				   { 0, 0, 0, 100 } );
+	DrawText( "P - play\nE - exit", 0.0f, 0.0f, 20, GREEN );
+
+	if( IsKeyPressed( KeyboardKey::KEY_P ) )
+	{
+		g_scene.clear();
+		g_player = new Player( g_sceenWidth, g_sceenHeight );
+		g_scene.push_back( g_player );
+
+		ScoreManager* scoreManager = ScoreManager::GetInstance();
+		scoreManager->SetPlayer( g_player );
+	}
+
+	shutdownRequested = IsKeyReleased( KeyboardKey::KEY_E );
+}
 
 //----------------------------------------------------------
 
@@ -46,14 +72,11 @@ int main( int argc, char* argv[] )
 	g_upperLeftCorner = { -g_sceenWidth * 0.5f, -g_sceenHeight * 0.5f };
 	g_localCamera2D = { 0.0f, 0.0f, g_upperLeftCorner.x, g_upperLeftCorner.y, 0.0f, 1.0f };
 
-	Player* player = new Player( g_sceenWidth, g_sceenHeight );
-	g_scene.push_back( player );
 
 	ScoreManager* scoreManager = ScoreManager::GetInstance();
-	scoreManager->SetPlayer( player );
 
 	// GAME LOOP
-	while( !WindowShouldClose() ) // responds to ESC key and close window button
+	while( !WindowShouldClose() && shutdownRequested == false ) // responds to ESC key and close window button
 	{
 		// UPDATE
 		for( GameObject* gameObject : g_scene )
@@ -80,6 +103,12 @@ int main( int argc, char* argv[] )
 		std::string scoreText = "Your score:";
 		scoreText += std::to_string( scoreManager->GetScore() );
 		DrawText( scoreText.c_str(), ( int ) g_upperLeftCorner.x, ( int ) g_upperLeftCorner.y, 20, GREEN );
+
+		// MainMenu
+		if( g_player == nullptr || g_player->HasDied() )
+		{
+			PresentMainMenu();
+		}
 
 		EndMode2D();
 		EndDrawing();
