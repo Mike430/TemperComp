@@ -4,4 +4,4 @@ ___
 
 Baseline temper 2 competition repo
 
-(This is the guide for getting you build status)
+(This is the guide for getting you build status: https://docs.travis-ci.com/user/status-images/)
