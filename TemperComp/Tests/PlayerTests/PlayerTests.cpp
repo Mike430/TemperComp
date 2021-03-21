@@ -58,7 +58,6 @@ public:
 
 void PlayerPreTestSetup()
 {
-	printf( "PlayerPreTestSetup called \n" );
 	g_testPlayer = new Player( 200, 200 ); // for tests we only need a 4 x 4 grid
 }
 
@@ -66,7 +65,6 @@ void PlayerPreTestSetup()
 
 void PlayerPostTestTeardown()
 {
-	printf( "PlayerPostTestTeardown called \n" );
 	delete g_testPlayer;
 	g_testPlayer = nullptr;
 }
@@ -183,9 +181,9 @@ PLAYER_TEST( PlayerWithBodyLength3_GetAvailablePositionsCalled_ArrayIsOfCorrectS
 
 //----------------------------------------------------------
 
-PLAYER_TEST( PlayerWithBodyLength3_ExtraBodyPartGranted_ExtraPartUpdates )
-{
-}
+//	PLAYER_TEST( PlayerWithBodyLength3_ExtraBodyPartGranted_ExtraPartUpdates )
+//	{
+//	}
 
 //----------------------------------------------------------
 
@@ -209,9 +207,9 @@ PLAYER_TEST( Player_OutOfBounds_ShouldDieIsTrue )
 
 //----------------------------------------------------------
 
-PLAYER_TEST( PlayerWithBodyLength3_OverlapsBodyPart_ShouldDieIsTrue )
-{
-}
+//	PLAYER_TEST( PlayerWithBodyLength3_OverlapsBodyPart_ShouldDieIsTrue )
+//	{
+//	}
 
 //----------------------------------------------------------
 
