@@ -5,7 +5,7 @@
 //----------------------------------------------------------
 
 #ifdef EXECUTE_TESTS
-struct PlayerTestHelperFunctions;
+struct PlayerTestHelpers;
 #endif //EXECUTE_TESTS
 
 //----------------------------------------------------------
@@ -56,7 +56,7 @@ private:
 
 #ifdef EXECUTE_TESTS
 public:
-	friend PlayerTestHelperFunctions;
+	friend PlayerTestHelpers;
 	KeyboardKey FakeKeyPressed;
 #endif //EXECUTE_TESTS
 };

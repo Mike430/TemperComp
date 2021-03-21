@@ -129,6 +129,8 @@
     <ClCompile Include="Tests\TestImplementation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="3rdParty\raylib\include\raylib.h" />
+    <ClInclude Include="3rdParty\temper\temper.h" />
     <ClInclude Include="Source\Managers\ScoreManager.h" />
     <ClInclude Include="Source\Core\GameObject.h" />
     <ClCompile Include="Source\Core\GameObject.cpp" />

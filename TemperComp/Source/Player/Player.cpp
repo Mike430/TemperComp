@@ -213,8 +213,8 @@ bool Player::ShouldDie()
 	float yExtent = ( float ) ( m_screenHeight / 2 );
 
 	// Is outside playspace
-	if( m_position.x < -xExtent || m_position.x > xExtent ||
-		m_position.y < -yExtent || m_position.y > yExtent )
+	if( m_position.x <= -xExtent || m_position.x >= xExtent + g_snakeStepSize ||
+		m_position.y <= -yExtent || m_position.y >= yExtent + g_snakeStepSize )
 	{
 		return true;
 	}

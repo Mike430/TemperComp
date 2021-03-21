@@ -58,3 +58,10 @@ inline bool operator==( const Vec2D& lhs, const Vec2D rhs )
 }
 
 //----------------------------------------------------------
+
+inline bool operator!=( const Vec2D& lhs, const Vec2D rhs )
+{
+	return fabs( lhs.x - rhs.x ) > DEFAULT_EPSILON || fabs( lhs.y - rhs.y ) > DEFAULT_EPSILON;
+}
+
+//----------------------------------------------------------
