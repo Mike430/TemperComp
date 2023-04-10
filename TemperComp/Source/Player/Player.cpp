@@ -14,7 +14,7 @@ const Color g_bodyColour = { 255, 0, 0, 255 };
 
 //----------------------------------------------------------
 
-Player::Player( int screenWidth, int screenHeight )
+Player::Player( int32_t screenWidth, int32_t screenHeight )
 	: GameObject()
 	, m_moveState( EPlayerMove::MoveUp )
 	, m_moveStatePrevious( EPlayerMove::MoveUp )
@@ -22,7 +22,7 @@ Player::Player( int screenWidth, int screenHeight )
 	, m_currentTime( 0.0f )
 	, m_screenWidth( screenWidth )
 	, m_screenHeight( screenHeight )
-	, m_availableSpaces( ( ( m_screenWidth / ( int )g_snakeStepSize )* ( m_screenHeight / ( int )g_snakeStepSize ) ) )
+	, m_availableSpaces( ( ( m_screenWidth / ( int32_t ) g_snakeStepSize )* ( m_screenHeight / ( int32_t ) g_snakeStepSize ) ) )
 	, m_maxBodyPartsCount( m_availableSpaces - 1 ) // minus 1 for the head part
 	, m_bodyPartsCount( 2 )
 	, m_bodyParts( m_maxBodyPartsCount )
@@ -53,19 +53,19 @@ void Player::Update( const float deltaTime )
 
 void Player::Draw() const
 {
-	for( int i = 0; i < m_bodyPartsCount && i < m_bodyParts.size(); ++i )
+	for ( int32_t i = 0; i < m_bodyPartsCount && i < m_bodyParts.size(); ++i )
 	{
-		DrawRectangle( ( int ) ( m_bodyParts[ i ].x - g_snakeStepSize ),
-					   ( int ) ( m_bodyParts[ i ].y - g_snakeStepSize ),
-					   ( int ) g_rectDimensions.x,
-					   ( int ) g_rectDimensions.y,
+		DrawRectangle( ( int32_t ) ( m_bodyParts[ i ].x - g_snakeStepSize ),
+					   ( int32_t ) ( m_bodyParts[ i ].y - g_snakeStepSize ),
+					   ( int32_t ) g_rectDimensions.x,
+					   ( int32_t ) g_rectDimensions.y,
 					   g_bodyColour );
 	}
 
-	DrawRectangle( ( int ) ( m_position.x - g_snakeStepSize ),
-				   ( int ) ( m_position.y - g_snakeStepSize ),
-				   ( int ) g_rectDimensions.x,
-				   ( int ) g_rectDimensions.y,
+	DrawRectangle( ( int32_t ) ( m_position.x - g_snakeStepSize ),
+				   ( int32_t ) ( m_position.y - g_snakeStepSize ),
+				   ( int32_t ) g_rectDimensions.x,
+				   ( int32_t ) g_rectDimensions.y,
 				   g_playerColour );
 }
 
@@ -76,26 +76,26 @@ const std::vector<Vec2D> Player::GetAvailableCellsPositions() const
 	std::vector<Vec2D> result;
 	result.reserve( m_maxBodyPartsCount - m_bodyPartsCount );
 
-	const int horizontalSpaces = m_screenWidth / ( int ) g_snakeStepSize;
-	const int verticalSpaces = m_screenHeight / ( int ) g_snakeStepSize;
+	const int32_t horizontalSpaces = m_screenWidth / ( int32_t ) g_snakeStepSize;
+	const int32_t verticalSpaces = m_screenHeight / ( int32_t ) g_snakeStepSize;
 
-	for( int x = 0; x < horizontalSpaces; ++x )
+	for ( int32_t x = 0; x < horizontalSpaces; ++x )
 	{
-		for( int y = 0; y < verticalSpaces; ++y )
+		for ( int32_t y = 0; y < verticalSpaces; ++y )
 		{
 			Vec2D space( ( ( x * g_snakeStepSize ) + g_snakeStepSize ) - ( ( float ) m_screenWidth * 0.5f ), ( ( y * g_snakeStepSize ) + g_snakeStepSize ) - ( ( float ) m_screenHeight * .5f ) );
 			bool spaceIsFree = true;
 
-			for( int i = 0; i < m_bodyParts.size() && i < m_bodyPartsCount; ++i )
+			for ( int32_t i = 0; i < m_bodyParts.size() && i < m_bodyPartsCount; ++i )
 			{
-				if( space == m_position || space == m_bodyParts[ i ] )
+				if ( space == m_position || space == m_bodyParts[ i ] )
 				{
 					spaceIsFree = false;
 					break;
 				}
 			}
 
-			if( spaceIsFree )
+			if ( spaceIsFree )
 			{
 				result.push_back( space );
 			}
@@ -128,22 +128,22 @@ bool Player::CheckKeyPressed( const KeyboardKey Key ) const
 
 void Player::HandleInput()
 {
-	if( CheckKeyPressed( KEY_UP ) && m_moveStatePrevious != EPlayerMove::MoveDown )
+	if ( CheckKeyPressed( KEY_UP ) && m_moveStatePrevious != EPlayerMove::MoveDown )
 	{
 		m_moveState = EPlayerMove::MoveUp;
 	}
 
-	if( CheckKeyPressed( KEY_DOWN ) && m_moveStatePrevious != EPlayerMove::MoveUp )
+	if ( CheckKeyPressed( KEY_DOWN ) && m_moveStatePrevious != EPlayerMove::MoveUp )
 	{
 		m_moveState = EPlayerMove::MoveDown;
 	}
 
-	if( CheckKeyPressed( KEY_LEFT ) && m_moveStatePrevious != EPlayerMove::MoveRight )
+	if ( CheckKeyPressed( KEY_LEFT ) && m_moveStatePrevious != EPlayerMove::MoveRight )
 	{
 		m_moveState = EPlayerMove::MoveLeft;
 	}
 
-	if( CheckKeyPressed( KEY_RIGHT ) && m_moveStatePrevious != EPlayerMove::MoveLeft )
+	if ( CheckKeyPressed( KEY_RIGHT ) && m_moveStatePrevious != EPlayerMove::MoveLeft )
 	{
 		m_moveState = EPlayerMove::MoveRight;
 	}
@@ -153,31 +153,31 @@ void Player::HandleInput()
 
 void Player::MovePlayer( const float deltaTime )
 {
-	if( !IsDead )
+	if ( !IsDead )
 	{
 		m_currentTime += deltaTime;
 
-		if( m_currentTime > m_moveTimer )
+		if ( m_currentTime > m_moveTimer )
 		{
 			m_currentTime = 0.0f;
 			m_moveStatePrevious = m_moveState;
 
 			UpdateBody();
 
-			switch( m_moveState )
+			switch ( m_moveState )
 			{
-				case EPlayerMove::MoveUp:
-					m_position.y -= g_snakeStepSize;
-					break;
-				case EPlayerMove::MoveLeft:
-					m_position.x -= g_snakeStepSize;
-					break;
-				case EPlayerMove::MoveRight:
-					m_position.x += g_snakeStepSize;
-					break;
-				default:
-					m_position.y += g_snakeStepSize;
-					break;
+			case EPlayerMove::MoveUp:
+				m_position.y -= g_snakeStepSize;
+				break;
+			case EPlayerMove::MoveLeft:
+				m_position.x -= g_snakeStepSize;
+				break;
+			case EPlayerMove::MoveRight:
+				m_position.x += g_snakeStepSize;
+				break;
+			default:
+				m_position.y += g_snakeStepSize;
+				break;
 			}
 
 			IsDead = ShouldDie();
@@ -192,9 +192,9 @@ void Player::MovePlayer( const float deltaTime )
 
 void Player::UpdateBody()
 {
-	for( int i = m_bodyPartsCount - 1; i >= 0; --i )
+	for ( int32_t i = m_bodyPartsCount - 1; i >= 0; --i )
 	{
-		if( i != 0 )
+		if ( i != 0 )
 		{
 			m_bodyParts[ i ] = m_bodyParts[ i - 1 ];
 		}
@@ -213,16 +213,16 @@ bool Player::ShouldDie()
 	float yExtent = ( float ) ( m_screenHeight / 2 );
 
 	// Is outside playspace
-	if( m_position.x <= -xExtent || m_position.x >= xExtent + g_snakeStepSize ||
-		m_position.y <= -yExtent || m_position.y >= yExtent + g_snakeStepSize )
+	if ( m_position.x <= -xExtent || m_position.x >= xExtent + g_snakeStepSize ||
+		 m_position.y <= -yExtent || m_position.y >= yExtent + g_snakeStepSize )
 	{
 		return true;
 	}
 
 	// Is overlapping a bodypart
-	for( int i = 0; i < m_bodyPartsCount && i < m_bodyParts.size(); ++i )
+	for ( int32_t i = 0; i < m_bodyPartsCount && i < m_bodyParts.size(); ++i )
 	{
-		if( m_position == m_bodyParts[ i ] )
+		if ( m_position == m_bodyParts[ i ] )
 		{
 			return true;
 		}

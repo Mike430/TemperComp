@@ -39,7 +39,7 @@ void ScoreManager::Update()
 
 			if( availablePositions.size() > 0 )
 			{
-				int newPositionIndex = rand() % ( availablePositions.size() - 1 );
+				int32_t newPositionIndex = rand() % ( availablePositions.size() - 1 );
 
 				m_pickupPosition = availablePositions[ newPositionIndex ];
 				m_player->GrantExtraBodyPart();

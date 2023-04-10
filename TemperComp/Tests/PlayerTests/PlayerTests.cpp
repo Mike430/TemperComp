@@ -40,9 +40,9 @@ public:
 	static void SetPlayerBodyParts( Player* playerPtr, std::vector<Vec2D> newBodyParts )
 	{
 		TEMPER_CHECK_TRUE_AM( newBodyParts.size() < playerPtr->m_maxBodyPartsCount, "Attempted to assign an array of body parts greater than what the player can have" );
-		playerPtr->m_bodyPartsCount = ( int ) newBodyParts.size();
+		playerPtr->m_bodyPartsCount = ( int32_t ) newBodyParts.size();
 
-		for( int i = 0; i < newBodyParts.size(); ++i )
+		for( int32_t i = 0; i < newBodyParts.size(); ++i )
 		{
 			playerPtr->m_bodyParts[ i ] = newBodyParts[ i ];
 		}
@@ -74,7 +74,7 @@ void PlayerPostTestTeardown()
 //==========================================================
 
 #define PLAYER_TEST( testName ) TEMPER_TEST_C( testName, PlayerPreTestSetup, PlayerPostTestTeardown, TEMPER_FLAG_SHOULD_RUN )
-#define PLAYER_PARAMETRIC( TestName, ... ) TEMPER_PARAMETRIC_C( TestName, PlayerPreTestSetup, PlayerPostTestTeardown, TEMPER_FLAG_SHOULD_RUN, __VA_ARGS__ )
+#define PLAYER_PARAMETRIC( TestName, ... ) TEMPER_TEST_PARAMETRIC_C( TestName, PlayerPreTestSetup, PlayerPostTestTeardown, TEMPER_FLAG_SHOULD_RUN, __VA_ARGS__ )
 
 //==========================================================
 // TESTS

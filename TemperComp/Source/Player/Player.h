@@ -23,11 +23,11 @@ enum EPlayerMove
 class Player : public GameObject
 {
 public:
-	Player(int screenWidth, int screenHeight);
+	Player( int32_t screenWidth, int32_t screenHeight );
 	~Player();
 
 	// GameObject Inherited
-	virtual void Update(const float deltaTime) override;
+	virtual void Update( const float deltaTime ) override;
 	virtual void Draw() const override;
 	// GameObject Inherited
 
@@ -46,11 +46,11 @@ private:
 	EPlayerMove m_moveStatePrevious;
 	float m_moveTimer;
 	float m_currentTime;
-	int m_screenWidth;
-	int m_screenHeight;
-	int m_availableSpaces;
-	int m_maxBodyPartsCount;
-	int m_bodyPartsCount;
+	int32_t m_screenWidth;
+	int32_t m_screenHeight;
+	int32_t m_availableSpaces;
+	int32_t m_maxBodyPartsCount;
+	int32_t m_bodyPartsCount;
 	std::vector<Vec2D> m_bodyParts;
 
 	bool IsDead;
