@@ -18,8 +18,8 @@ public:
 
 	inline Vec2D operator+( float rhs ) const;						// See the INL file
 	inline Vec2D operator-( float rhs ) const;						// See the INL file
-	inline Vec2D operator*( float rhs ) const						{ return Vec2D( this->x * rhs, this->y * rhs );	
-	inline Vec2D operator/( float rhs ) const						{ return Vec2D( this->x / rhs, this->y / rhs )	 }
+	inline Vec2D operator*( float rhs ) const						{ return Vec2D( this->x * rhs, this->y * rhs ); }
+	inline Vec2D operator/( float rhs ) const						{ return Vec2D( this->x / rhs, this->y / rhs ); }
 	friend inline Vec2D operator*( float lhs, Vec2D rhs )			{ return Vec2D( rhs.x * lhs, rhs.y * lhs ); }
 	friend inline Vec2D operator/( float lhs, Vec2D rhs )			{ return Vec2D( rhs.x / lhs, rhs.y / lhs ); }
 
